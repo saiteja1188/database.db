@@ -3,8 +3,6 @@ const path = require('path')
 const {open} = require('sqlite')
 const sqlite3 = require("sqlite3")
 const cors = require('cors')
-const bcrypt = require('bcrypt')
-
 
 const app = express()
 app.use(cors())
@@ -52,21 +50,3 @@ app.get('/empl', async(req, res)=>{
     
 })
 
-app.post('/users/', async (request, response) => {
-    const {id, username,  password, } = request.body
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const selectUserQuery = ` SELECT * FROM user WHERE username = '${username}'; `
-    const dbUser = await db.get(selectUserQuery)
-  
-    if (dbUser === undefined) {
-      const createUserQuery = `
-      INSERT INTO user (id, username,  password)
-      VALUES ( '${id}', '${username}', '${hashedPassword}' )
-       ;`
-      await db.run(createUserQuery)
-      response.send('User created successfully')
-    } else {
-      response.status(400)
-      response.send('user already exists')
-    }
-  })
